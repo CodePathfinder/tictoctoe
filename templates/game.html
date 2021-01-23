@@ -43,12 +43,14 @@
                 </tr>
             {% endfor %}
         </table>
-        {% if not gameover %}  
-            <a href="/computermove">Let Computer Make Move</a><br>
+        {% if not start %}  
+            {% if not gameover %}  
+                <a href="/computermove">Let Computer Make Move</a><br>         
+            {% endif %}
+            <a href="/undo">Undo Move</a><br>
+            <a href="/restart">Reset Game</a>
         {% else %}
             <a></a>
         {% endif %}
-        <a href="/undo">Undo Move</a><br> 
-        <a href="/restart">Reset Game</a>
     </body>
 </html>

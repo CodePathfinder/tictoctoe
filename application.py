@@ -38,7 +38,7 @@ def check_result(board):
 
 
 # this function helps the computer determin the best move (brute force algorthm)
-def minimax(game, turn, arr):
+def minimax(game, turn):
     score = check_result(game)
     if score in [-1, 0, 1]:
         print("THIS IS A BASE CASE! SCORE = ", score)
@@ -52,36 +52,23 @@ def minimax(game, turn, arr):
 
     print("Available_moves: ", available_moves)
 
-    # minimax algorithm for "X" player
     if turn == "X":
         value = -1000
         for move in available_moves:
-            # update map with each available move
-            print(f"X-move: {move}]")
-            # update game with the currect move
+            # update game with the next move
             game[move[0]][move[1]] = "X"
-            value = max(value, minimax(game, "O", arr))
-            # recover game grid after analysis of the move
+            value = max(value, minimax(game, "O"))
+            # restore game after analysis of the next move
             game[move[0]][move[1]] = None
-            # update map when value is compared with minimax result
-        print()
 
-    # minimax algorithm for "O" player
     else:
         value = 1000
         for move in available_moves:
-            print(f"O-move: {move}]")
-            # update game with the currect move
+            # update game with the next move
             game[move[0]][move[1]] = "O"
-            value = min(value, minimax(game, "X", arr))
-            # recover game grid after analysis of the move
+            value = min(value, minimax(game, "X"))
+            # restore game after analysis of the next move
             game[move[0]][move[1]] = None
-            # update map when value is compared with minimax result
-        print()
-
-    if (8 - len(session["moves"])) == len(available_moves):
-        print("APPENDED VALUE: ", value)
-        arr.append(value)
 
     return value
 
@@ -103,13 +90,17 @@ def index():
     if score != None:
         session["gameover"] = True
     result = ""
+    if session["moves"] == []:
+        start = True
+    else:
+        start = False
     if score == 1:
         result = "Winner is X!"
     elif score == -1:
         result = "Winner is O!"
     elif score == 0:  
         result = "Tie game..."
-    return render_template("game.html", game=session["board"], turn=session["turn"], result=result, gameover=session["gameover"])
+    return render_template("game.html", game=session["board"], turn=session["turn"], result=result, gameover=session["gameover"], start=start)
 
 
 @app.route("/play/<int:row>/<int:col>")
@@ -142,42 +133,51 @@ def undo():
 def computermove():
     # create game matrix (argument in MINIMAX) as deep copy of session["board"]  
     game = copy.deepcopy(session["board"])
-    # available next moves - list of all moves available for the moving player
+    if session["turn"] == "X":
+        next_turn = "O"
+    else:
+        next_turn = "X"
     available_next_moves = []
     for i in range(3):
         for j in range(3):
             if game[i][j] == None:
                 available_next_moves.append((i ,j))
     
-    # minimax shall not be called if only one move left on the board
+    print(f"List of moves available for {session['turn']} player: {available_next_moves}")
+
     if len(available_next_moves) == 1:
         computer_move = available_next_moves[0]
-    else:
-        # create array of scores for available next moves to be filled in by minimax
-        values_arr = []
+    else:    
+        values = []
+        value_move_map = []
+        for move in available_next_moves:
+            # imitation of the test move
+            game[move[0]][move[1]] = session["turn"]
+            # value: score for the game presuming the test move is made 
+            value = minimax(game, next_turn)
+            # list of scores for the games for each of available moves
+            values.append(value)
+            # score - move mapping list
+            value_move_map.append((value, move))
+            # cancelation of the test move
+            game[move[0]][move[1]] = None
+        print("Values List:", values) 
+        print("Value_Move_Map:", value_move_map) 
 
-        # board_value: current game/board "best scenario score" (-1, 0, or 1) for the moving player (return of minimax()) 
-        board_value = minimax(game, session["turn"], values_arr)
-        
-        # results of minimax function
-        print(f"GAME/BOARD STATUS = {board_value} for {session['turn']} player")
-        print("list of game/board scores avaliable for next moves", values_arr)
-        print(f"List of moves available for {session['turn']} player: {available_next_moves}")
-
-        # select move(s) based on "best scenario score" and correspondance of indexes in arr and available moves lists
         selected_moves = []
-        for i in range(len(values_arr)):
-            if values_arr[i] == board_value:
-                selected_moves.append(available_next_moves[i])
+        if session["turn"] == "X":
+            best_value = max(values)
+        else:
+            best_value = min(values)
+        print("Best Value:", best_value) 
+        for item in value_move_map:
+            if item[0] == best_value:
+                selected_moves.append(item[1])
         print("SELECTED MOVES LIST: ", selected_moves)
+        
+        # if one or more elements in selected moves list, the first element is selected
+        computer_move = selected_moves[0]
 
-        # if more than one elements in selected moves list, the first element is selected
-        try:
-            computer_move = selected_moves[0]
-        except IndexError:
-            print("Sorry, no selected moves in the list")
-
-    # update the board with computer selected move
     session["board"][computer_move[0]][computer_move[1]] = session["turn"]
     session["moves"].append(computer_move)
     return redirect(url_for("index"))
