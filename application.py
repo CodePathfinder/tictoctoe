@@ -1,7 +1,6 @@
 from flask import Flask, render_template, session, redirect, url_for
 from flask_session import Session
 from tempfile import mkdtemp
-import math
 import copy
 
 app = Flask(__name__)
@@ -103,8 +102,6 @@ def index():
     if score != None:
         session["gameover"] = True
     result = ""
-    # if score != None:
-    #    session["gameover"] = True
     if score == 1:
         result = "Winner is X!"
     elif score == -1:
@@ -183,21 +180,3 @@ def computermove():
     session["board"][computer_move[0]][computer_move[1]] = session["turn"]
     session["moves"].append(computer_move)
     return redirect(url_for("index"))
-    
-
-''' 
-Minimax Pseudocode
-    def minimax(game, turn):
-        if game is over:
-            return score for game
-        moves = available moves for game
-        if turn is X:
-            value = -infinity
-            for move in moves:
-                value = max(value, minimax(game with move made, 0))
-        else:
-            value = infinity
-            for move in moves:
-                value = min(value, minimax(game with move made, X))
-        return value
-'''
