@@ -51,19 +51,13 @@ def minimax(game, turn):
 
     score = check_result(game)
     if score in [-1, 0, 1]:
-        print(f"THIS IS A BASE CASE! SCORE = {score}")
         # determine depth of recursion
         recursion_depth = max_hops - len(available_moves)
-        print(f"Recursion_depth = {recursion_depth}")
-        print()
         return (score, recursion_depth)
-
-    print(f"Available moves for {turn} player: {available_moves}")
 
     if turn == "X":
         value = -1000
         for move in available_moves:
-            print('"X" next move:', move)
             # update game with the next move
             game[move[0]][move[1]] = "X"
             score_depth = minimax(game, "O")
@@ -91,7 +85,6 @@ def minimax(game, turn):
     else:
         value = 1000
         for move in available_moves:
-            print('"O" next move:', move)
             # update game with the next move
             game[move[0]][move[1]] = "O"
             score_depth = minimax(game, "X")
@@ -202,8 +195,6 @@ def computermove():
                 available_next_moves.append((i, j))
     # set number of the moves left left to fill in the game board (used in minimax function to calculate depth of recurtion for each basecase)
     session['counter'] = len(available_next_moves)
-    print(
-        f"List of moves available for {session['turn']} player: {available_next_moves}")
 
     if len(available_next_moves) == 1:
         computer_move = available_next_moves[0]
@@ -211,7 +202,6 @@ def computermove():
         value_move_map = []
         value_hops = []
         for move in available_next_moves:
-            print(f'==== "{session["turn"]}" NEXT MOVE ==== :', move)
             # imitation of the test move
             game[move[0]][move[1]] = session["turn"]
             # value_hops tulpe: SCORE for the game presuming the test move is made and correspoding NUMBER OF HOPS(moves) to get ths score
@@ -222,8 +212,6 @@ def computermove():
             value_move_map.append((value_hop, move))
             # cancelation of the test move
             game[move[0]][move[1]] = None
-        print("Value_hops List:", value_hops)
-        print("Value_Move_Map:", value_move_map)
 
         # determine best move(s) by (1) best_value and (2) best_hops crireria
         if session["turn"] == "X":
@@ -246,14 +234,11 @@ def computermove():
                 # determine shortest way for win
                 best_hops = min(
                     hops for value, hops in value_hops if value == best_value)
-        print(f"Best Value {best_value} | Best Hops: {best_hops}")
         # compile and fill in "selected_moves" shortlist based on best_value/best_hops crireria
         selected_moves = []
         for item, move in value_move_map:
             if item[0] == best_value and item[1] == best_hops:
                 selected_moves.append(move)
-
-        print("SELECTED MOVES LIST: ", selected_moves)
 
         # take the first element (presumably, "the best move") of the selected moves list
         computer_move = selected_moves[0]
