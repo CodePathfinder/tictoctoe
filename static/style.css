@@ -1,0 +1,48 @@
+body {
+  background-color: #007bff;
+  /* background-color: lightgrey; */
+  text-align: center;
+}
+
+.card-product-grid:hover {
+  box-shadow: 0 4px 15px rgb(153 153 153 / 80%);
+  transition: 0.3s;
+  transform: scale(1.01);
+}
+
+.card-product-grid {
+  border-radius: 0.2rem 0.2rem 0.2rem 0.2rem;
+  min-height: 120px;
+  text-align: center;
+  margin: 0px -10px;
+}
+
+.turn {
+  font-size: 50px;
+  color: red;
+}
+
+.move {
+  font-size: 18px;
+  border: 1px solid red;
+  border-radius: 0.2rem 0.2rem 0.2rem 0.2rem;
+  padding: 20px 5px;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+.plate {
+  border: 5px solid red;
+  padding: 0px 20px 7px 20px;
+  background-color: lightgrey;
+  border-radius: 0.2rem 0.2rem 0.2rem 0.2rem;
+}
+
+h3 {
+  background-color: white;
+  padding: 20px 20px;
+  border-radius: 0.2rem 0.2rem 0.2rem 0.2rem;
+  padding: 5px;
+}

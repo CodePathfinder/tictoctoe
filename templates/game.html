@@ -1,56 +1,79 @@
 <!DOCTYPE html>
 
 <html lang="en">
-    <head>
-        <title>Tic Tac Toe</title>
-        <style>
-            body {
-                text-align: center;
-            }
-            table {
-                border-collapse: collapse;
-                margin: auto;
-            } 
-            td {
-                border: 1px solid black;
-                width: 150px;
-                height: 150px;
-                font-size: 30px;
-                text-align: center;
-            }
-            td > a {
-                font-size: 18px;
-            }
-        </style>
-    </head>
-    <body>
-        <h3>TIC TAC TOE</h3>
-        <h3>{{ result }}</h3>
-        <table>
-            {% for i in range(3) %}
-                <tr>
-                    {% for j in range(3) %}
-                        <td>
-                            {% if game[i][j] %}
-                                {{ game[i][j] }}
-                            {% else %}
-                                {% if not result %}
-                                    <a href="{{ url_for('play', row=i, col=j) }}">Play {{ turn }} here.</a>
-                                {% endif %}
-                            {% endif %}
-                        </td>
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-        </table>
-        {% if not start %}  
-            {% if not gameover %}  
-                <a href="/computermove">Let Computer Make Move</a><br>         
-            {% endif %}
-            <a href="/undo">Undo Move</a><br>
-            <a href="/restart">Reset Game</a>
+
+<head>
+    <title>Tic Tac Toe</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body class="container">
+    <h1 class="my-4 text-white">TIC TAC TOE</h1>
+    <h3 class="w-50 mx-auto mb-4 {% if 'X' in result %} 
+        text-danger {% else %} text-primary {% endif %}">
+        {% if result %}
+        <span class="{% if 'X' in result %} 
+        text-danger {% elif 'O' in result %} text-primary {% else %} text-secondary {% endif %}">{{ result }}</span>
         {% else %}
-            <a></a>
+        <span class="text-secondary">{{ turn }} turn now</span>
         {% endif %}
-    </body>
+    </h3>
+    <div class="plate">
+        {% for i in range(3) %}
+        <div class="row my-2 justify-content-md-center">
+            {% for j in range(3) %}
+            <div class="col-sm-4 col-xs-auto">
+                <div class="card card-product-grid h-100 my-1">
+                    <div class="card-body">
+                        <h4 class="">
+                            {% if game[i][j] %}
+                            <div
+                                class="turn mt-2 {% if game[i][j]=='X' %} text-danger {% else %} text-primary {% endif %}">
+                                {{ game[i][j] }}
+                            </div>
+                            {% else %}
+                            {% if not result %}
+                            <div class="mt-4">
+                                <a class="move" href="{{ url_for('play', row=i, col=j) }}">
+                                    Play {{ turn }} here
+                                </a>
+                            </div>
+                            {% endif %}
+                            {% endif %}
+                        </h4>
+                    </div>
+                    <!-- /.card-body mt-1 -->
+                </div>
+                <!-- /.card card-product-grid h-100 -->
+            </div>
+            <!-- /.col-lg-3 -->
+            {% endfor %}
+        </div>
+        <!-- /.row -->
+        {% endfor %}
+    </div>
+    <!-- /.plate -->
+    <div class="row my-3 mx-2 justify-content-md-center">
+        {% if not start %}
+        {% if not gameover and cthelp is gt 1 %}
+        <div class="col-sm-4 col-xs-auto">
+            <a class="btn btn-secondary btn-block mb-1" href="/computermove">Computer help</a>
+        </div>
+        {% endif %}
+        <div class="col-sm-4 col-xs-auto">
+            <a class="btn btn-secondary btn-block mb-1" href="/undo">Undo move</a>
+        </div>
+        <div class="col-sm-4 col-xs-auto">
+            <a class="btn btn-secondary btn-block mb-1" href="/restart">Reset game</a>
+        </div>
+        {% endif %}
+    </div>
+    <!-- /.row -->
+</body>
+
 </html>
